@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountRegister } from '@purple/contracts';
-import { UserRole } from '@purple/interfaces';
+import { AccountRegister } from '@linkedin/contracts';
+import { UserRole } from '@linkedin/interfaces';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserRepository } from '../user/repositories/user.repository';
 
