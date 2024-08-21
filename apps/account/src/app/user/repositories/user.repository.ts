@@ -3,6 +3,7 @@ import { User } from '../models/user.model';
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
+import { IUser } from '@linkedin/interfaces';
 
 @Injectable()
 export class UserRepository {
@@ -15,8 +16,8 @@ export class UserRepository {
     return newUser.save();
   }
 
-  async findUser(email: string) {
-    return this.userModel.findOne({ email }).exec();
+  async findUser(email: string): Promise<IUser> {
+    return this.userModel.findOne<IUser>({ email }).exec();
   }
 
   async findUserById(id: string) {

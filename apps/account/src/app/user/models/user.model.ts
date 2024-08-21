@@ -19,7 +19,7 @@ export class UserCourses extends Document implements IUserCourses {
 export const UserCoursesSchema = SchemaFactory.createForClass(UserCourses);
 
 @Schema()
-export class User extends Document implements IUser {
+export class User extends Document<string> implements IUser {
   @Prop()
   displayName?: string;
 
