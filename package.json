@@ -2,7 +2,11 @@
   "name": "@linkedin/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",
@@ -11,7 +15,9 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/microservices": "^10.4.1",
     "@nestjs/mongoose": "^10.0.10",
+    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.2",
+    "@nestjs/schedule": "^4.1.0",
     "amqp-connection-manager": "^4.1.14",
     "amqplib": "^0.10.4",
     "axios": "^1.6.0",

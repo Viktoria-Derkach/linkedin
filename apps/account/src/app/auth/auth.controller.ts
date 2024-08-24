@@ -1,4 +1,4 @@
-import { Body, Controller, Logger } from '@nestjs/common';
+import { Body, Controller, Logger, Post } from '@nestjs/common';
 import { AccountLogin, AccountRegister } from '@linkedin/contracts';
 import { AuthService } from './auth.service';
 import {
@@ -35,7 +35,14 @@ export class AuthController {
   async login(
     @Payload() { email, password }: AccountLogin.Request
   ): Promise<AccountLogin.Response> {
+    console.log('geee');
+
     const { id } = await this.authService.validateUser(email, password);
     return this.authService.login(id);
+  }
+
+  @Post('login')
+  async loginn(@Body() dto: any) {
+    console.log(' in login');
   }
 }

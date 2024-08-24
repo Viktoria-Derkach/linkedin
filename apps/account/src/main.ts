@@ -35,11 +35,12 @@ async function bootstrap() {
   });
 
   // Start the microservice
-  await app.startAllMicroservices();
+  // await app.startAllMicroservices();
+  await app.init();
 
-  Logger.log(`🚀 Accounts is running`);
+  Logger.log(`🚀 account is running on: `);
 
-  // await microservice.listen();
+  await microservice.listen();
 }
 
 bootstrap();
