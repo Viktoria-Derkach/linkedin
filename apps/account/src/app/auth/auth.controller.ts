@@ -18,7 +18,8 @@ export class AuthController {
   async register(
     @Payload() dto: AccountRegister.Request,
     @Ctx() context: RmqContext
-  ): Promise<AccountRegister.Response> {
+  ) {
+    console.log('in register account');
     const {
       properties: { headers },
     } = context.getMessage();
@@ -26,12 +27,14 @@ export class AuthController {
 
     const logger = new Logger(rid);
     logger.error('There was an error');
-    return this.authService.register(dto);
+    console.log(rid, 'rid - ridridridrid');
+
+    // return this.authService.register(dto);
   }
 
   // @RMQValidate()
   // @RMQRoute(AccountLogin.topic)
-  @MessagePattern(AccountRegister.topic)
+  @MessagePattern(AccountLogin.topic)
   async login(
     @Payload() { email, password }: AccountLogin.Request
   ): Promise<AccountLogin.Response> {
@@ -39,10 +42,5 @@ export class AuthController {
 
     const { id } = await this.authService.validateUser(email, password);
     return this.authService.login(id);
-  }
-
-  @Post('login')
-  async loginn(@Body() dto: any) {
-    console.log(' in login');
   }
 }

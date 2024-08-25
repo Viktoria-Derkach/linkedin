@@ -9,9 +9,23 @@ import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AuthController } from './controllers/auth.controller';
 import { UserController } from './controllers/user.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
+    ClientsModule.register([
+      {
+        name: 'linkedin',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'linkedin.account',
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
     ConfigModule.forRoot({ envFilePath: 'envs/.api.env', isGlobal: true }),
     JwtModule.registerAsync(getJWTConfig()),
     PassportModule,

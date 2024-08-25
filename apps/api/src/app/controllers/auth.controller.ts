@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Inject,
   Param,
   Patch,
   Post,
@@ -14,13 +15,38 @@ import {
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { ChangeInfoDto } from '../dtos/change-info.dto';
+import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 
 @Controller('auth')
 export class AuthController {
   // constructor(private readonly rmqService: RMQService) {}
+  constructor(@Inject('linkedin') private readonly client: ClientProxy) {}
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
+    try {
+      const catMess = 'cattt';
+      const record = new RmqRecordBuilder(catMess)
+        .setOptions({
+          headers: {
+            requestId: 'adad',
+          },
+          priority: 3,
+        })
+        .build();
+      console.log('in register api');
+
+      this.client.send(AccountRegister.topic, record).subscribe({
+        next: (result) => console.log(result),
+        error: (err) => console.error(err, 'fuck'),
+        complete: () => console.log('Message sent'),
+      });
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+
     // try {
     //   return await this.rmqService.send<
     //     AccountRegister.Request,
