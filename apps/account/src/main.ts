@@ -20,7 +20,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // Start the HTTP application
-  await app.listen(configService.get('HTTP_PORT', 3000));
+  // await app.listen(configService.get('HTTP_PORT', 3000));
 
   // Create and configure the RabbitMQ microservice
   const microservice = app.connectMicroservice<MicroserviceOptions>({
