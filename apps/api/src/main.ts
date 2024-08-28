@@ -25,22 +25,23 @@ async function bootstrap() {
   await app.listen(port);
 
   // Create and configure the RabbitMQ microservice
-  const microservice = app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [configService.get<string>('RMQ_URL')],
-      queue: configService.get<string>('RMQ_QUEUE'),
-      queueOptions: {
-        durable: false,
-      },
-    },
-  });
+  // const microservice = app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.RMQ,
+  //   options: {
+  //     urls: [configService.get<string>('RMQ_URL')],
+  //     queue: configService.get<string>('RMQ_QUEUE'),
+  //     queueOptions: {
+  //       durable: true,
+  //     },
+
+  //   },
+  // });
 
   // Start the microservice
   // await app.startAllMicroservices();
   await app.init();
 
-  await microservice.listen();
+  // await microservice.listen();
 
   Logger.log(`🚀 Application is running on: http://localhost:${port}`);
 }

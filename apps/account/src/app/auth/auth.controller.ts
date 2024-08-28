@@ -3,9 +3,11 @@ import { AccountLogin, AccountRegister } from '@linkedin/contracts';
 import { AuthService } from './auth.service';
 import {
   Ctx,
+  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
+  RmqRecord,
 } from '@nestjs/microservices';
 
 @Controller()
@@ -14,22 +16,23 @@ export class AuthController {
 
   // @RMQValidate()
   // @RMQRoute(AccountRegister.topic)
-  @MessagePattern(AccountRegister.topic)
+  @EventPattern(AccountRegister.topic)
   async register(
-    @Payload() dto: AccountRegister.Request,
+    @Payload() data: AccountRegister.Request,
     @Ctx() context: RmqContext
-  ) {
-    console.log('in register account');
+  ): Promise<AccountRegister.Response> {
+    console.log('Received DTO:', data);
     const {
       properties: { headers },
     } = context.getMessage();
     const rid = headers['requestId'];
+    console.log(rid);
 
-    const logger = new Logger(rid);
-    logger.error('There was an error');
-    console.log(rid, 'rid - ridridridrid');
-
-    // return this.authService.register(dto);
+    // const logger = new Logger(rid);
+    // logger.error('There was an error');
+    if (data) {
+      return this.authService.register(data);
+    }
   }
 
   // @RMQValidate()

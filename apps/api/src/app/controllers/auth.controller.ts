@@ -25,8 +25,8 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     try {
-      const catMess = 'cattt';
-      const record = new RmqRecordBuilder(catMess)
+
+      const record = new RmqRecordBuilder(dto)
         .setOptions({
           headers: {
             requestId: 'adad',
@@ -34,17 +34,19 @@ export class AuthController {
           priority: 3,
         })
         .build();
-      console.log('in register api');
+      console.log(dto, record, 'in register api');
 
-      this.client.send(AccountRegister.topic, record).subscribe({
-        next: (result) => console.log(result),
-        error: (err) => console.error(err, 'fuck'),
-        complete: () => console.log('Message sent'),
-      });
+      // this.client.send(AccountRegister.topic, record).subscribe({
+      //   next: (result) => console.log(result),
+      //   error: (err) => console.error(err, 'fuck'),
+      //   complete: () => console.log('Message sent'),
+      // });
+      this.client.emit(AccountRegister.topic, dto);
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);
       }
+      console.error(e);
     }
 
     // try {

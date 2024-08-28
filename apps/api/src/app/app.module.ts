@@ -19,10 +19,10 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.RMQ,
         options: {
           urls: ['amqp://localhost:5672'],
-          queue: 'linkedin.account',
-          queueOptions: {
-            durable: false,
-          },
+          queue: 'linkedin.account1',
+          // queueOptions: {
+          //   durable: true,
+          // },
         },
       },
     ]),
