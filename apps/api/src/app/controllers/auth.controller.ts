@@ -27,11 +27,6 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     try {
-      // this.client.send(AccountRegister.topic, record).subscribe({
-      //   next: (result) => console.log(result),
-      //   error: (err) => console.error(err, 'fuck'),
-      //   complete: () => console.log('Message sent'),
-      // });
       return this.client
         .send({ cmd: AccountRegister.topic }, dto)
         .pipe(timeout(5000));
@@ -41,31 +36,19 @@ export class AuthController {
       }
       console.error(e);
     }
-
-    // try {
-    //   return await this.rmqService.send<
-    //     AccountRegister.Request,
-    //     AccountRegister.Response
-    //   >(AccountRegister.topic, dto, { headers: { requestId: 'adad' } });
-    // } catch (e) {
-    //   if (e instanceof Error) {
-    //     throw new UnauthorizedException(e.message);
-    //   }
-    // }
   }
 
   @Post('login')
   async login(@Body() dto: LoginDto) {
-    // try {
-    //   return await this.rmqService.send<
-    //     AccountLogin.Request,
-    //     AccountLogin.Response
-    //   >(AccountLogin.topic, dto);
-    // } catch (e) {
-    //   if (e instanceof Error) {
-    //     throw new UnauthorizedException(e.message);
-    //   }
-    // }
+    try {
+      return this.client
+        .send({ cmd: AccountLogin.topic }, dto)
+        .pipe(timeout(5000));
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
   }
 
   @Patch('change-info/:id')

@@ -27,7 +27,6 @@ export class AuthService {
       const newUser = await this.userRepository.createUser(newUserEntity);
       return { email: newUser.email };
     } catch (error) {
-
       if (error instanceof BadRequestException) {
         return {
           statusCode: error.getStatus(),
@@ -40,12 +39,12 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findUser(email);
     if (!user) {
-      throw new Error('Wrong login or password');
+      throw new BadRequestException('Wrong login or password');
     }
     const userEntity = new UserEntity(user);
     const isCorrectPassword = await userEntity.validatePassword(password);
     if (!isCorrectPassword) {
-      throw new Error('Wrong login or password');
+      throw new BadRequestException('Wrong login or password');
     }
     return { id: user._id };
   }

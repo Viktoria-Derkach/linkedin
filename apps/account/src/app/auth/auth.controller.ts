@@ -1,4 +1,10 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Logger,
+  Post,
+} from '@nestjs/common';
 import { AccountLogin, AccountRegister } from '@linkedin/contracts';
 import { AuthService } from './auth.service';
 import {
@@ -22,28 +28,12 @@ export class AuthController {
     @Ctx() context: RmqContext //
   ) {
     console.log('Received DTO:', data, context.getPattern());
-    // const {
-    //   properties: { headers },
-    // } = context.getMessage();
-    // const rid = headers['requestId'];
-    // console.log(rid);
 
-    // const logger = new Logger(rid);
-    // logger.error('There was an error');
-    if (data) {
-      return this.authService.register(data);
-    }
-    return [];
+    return this.authService.register(data);
   }
 
-  // @RMQValidate()
-  // @RMQRoute(AccountLogin.topic)
-  @MessagePattern(AccountLogin.topic)
-  async login(
-    @Payload() { email, password }: AccountLogin.Request
-  ): Promise<AccountLogin.Response> {
-    console.log('geee');
-
+  @MessagePattern({ cmd: AccountLogin.topic })
+  async login(@Payload() { email, password }: AccountLogin.Request) {
     const { id } = await this.authService.validateUser(email, password);
     return this.authService.login(id);
   }
