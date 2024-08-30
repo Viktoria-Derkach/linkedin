@@ -16,6 +16,7 @@ import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
 import { ChangeInfoDto } from '../dtos/change-info.dto';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
+import { timeout } from 'rxjs';
 
 @Controller('auth')
 export class AuthController {
@@ -25,23 +26,14 @@ export class AuthController {
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     try {
-
-      const record = new RmqRecordBuilder(dto)
-        .setOptions({
-          headers: {
-            requestId: 'adad',
-          },
-          priority: 3,
-        })
-        .build();
-      console.log(dto, record, 'in register api');
-
       // this.client.send(AccountRegister.topic, record).subscribe({
       //   next: (result) => console.log(result),
       //   error: (err) => console.error(err, 'fuck'),
       //   complete: () => console.log('Message sent'),
       // });
-      this.client.emit(AccountRegister.topic, dto);
+      return this.client
+        .send({ cmd: AccountRegister.topic }, dto)
+        .pipe(timeout(5000));
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);

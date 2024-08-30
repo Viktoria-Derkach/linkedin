@@ -16,23 +16,24 @@ export class AuthController {
 
   // @RMQValidate()
   // @RMQRoute(AccountRegister.topic)
-  @EventPattern(AccountRegister.topic)
+  @MessagePattern({ cmd: AccountRegister.topic })
   async register(
     @Payload() data: AccountRegister.Request,
-    @Ctx() context: RmqContext
-  ): Promise<AccountRegister.Response> {
-    console.log('Received DTO:', data);
-    const {
-      properties: { headers },
-    } = context.getMessage();
-    const rid = headers['requestId'];
-    console.log(rid);
+    @Ctx() context: RmqContext //
+  ) {
+    console.log('Received DTO:', data, context.getPattern());
+    // const {
+    //   properties: { headers },
+    // } = context.getMessage();
+    // const rid = headers['requestId'];
+    // console.log(rid);
 
     // const logger = new Logger(rid);
     // logger.error('There was an error');
     if (data) {
       return this.authService.register(data);
     }
+    return [];
   }
 
   // @RMQValidate()
