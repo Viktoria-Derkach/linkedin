@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRegister } from '@linkedin/contracts';
 import { UserRole } from '@linkedin/interfaces';
@@ -13,18 +13,28 @@ export class AuthService {
   ) {}
 
   async register({ email, password, displayName }: AccountRegister.Request) {
-    const oldUser = await this.userRepository.findUser(email);
-    if (oldUser) {
-      throw new Error('This user has already been registered');
+    try {
+      const oldUser = await this.userRepository.findUser(email);
+      if (oldUser) {
+        throw new BadRequestException('This user has already been registered');
+      }
+      const newUserEntity = await new UserEntity({
+        displayName,
+        email,
+        passwordHash: '',
+        role: UserRole.Student,
+      }).setPassword(password);
+      const newUser = await this.userRepository.createUser(newUserEntity);
+      return { email: newUser.email };
+    } catch (error) {
+
+      if (error instanceof BadRequestException) {
+        return {
+          statusCode: error.getStatus(),
+          message: error.message,
+        };
+      }
     }
-    const newUserEntity = await new UserEntity({
-      displayName,
-      email,
-      passwordHash: '',
-      role: UserRole.Student,
-    }).setPassword(password);
-    const newUser = await this.userRepository.createUser(newUserEntity);
-    return { email: newUser.email };
   }
 
   async validateUser(email: string, password: string) {

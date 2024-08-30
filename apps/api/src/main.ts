@@ -3,7 +3,7 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app/app.module';
@@ -13,6 +13,12 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   // Create the HTTP application
   const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    })
+  );
 
   // Access the ConfigService to get environment variables
   const configService = app.get(ConfigService);
@@ -24,24 +30,7 @@ async function bootstrap() {
   const port = configService.get('HTTP_PORT', 3000);
   await app.listen(port);
 
-  // Create and configure the RabbitMQ microservice
-  // const microservice = app.connectMicroservice<MicroserviceOptions>({
-  //   transport: Transport.RMQ,
-  //   options: {
-  //     urls: [configService.get<string>('RMQ_URL')],
-  //     queue: configService.get<string>('RMQ_QUEUE'),
-  //     queueOptions: {
-  //       durable: true,
-  //     },
-
-  //   },
-  // });
-
-  // Start the microservice
-  // await app.startAllMicroservices();
   await app.init();
-
-  // await microservice.listen();
 
   Logger.log(`🚀 Application is running on: http://localhost:${port}`);
 }
