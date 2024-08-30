@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AccountRegister } from '@linkedin/contracts';
 import { UserRole } from '@linkedin/interfaces';
@@ -39,19 +43,22 @@ export class AuthService {
   async validateUser(email: string, password: string) {
     const user = await this.userRepository.findUser(email);
     if (!user) {
-      throw new BadRequestException('Wrong login or password');
+      throw new UnauthorizedException('Wrong login or password');
     }
     const userEntity = new UserEntity(user);
     const isCorrectPassword = await userEntity.validatePassword(password);
     if (!isCorrectPassword) {
-      throw new BadRequestException('Wrong login or password');
+      throw new UnauthorizedException('Wrong login or password');
     }
     return { id: user._id };
   }
 
   async login(id: string) {
     return {
-      access_token: await this.jwtService.signAsync({ id }),
+      access_token: await this.jwtService.signAsync(
+        { id },
+        { expiresIn: '1h' }
+      ),
     };
   }
 }
