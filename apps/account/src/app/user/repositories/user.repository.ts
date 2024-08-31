@@ -4,11 +4,14 @@ import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
 import { IUser } from '@linkedin/interfaces';
+import { RefreshToken } from '../models/refresh-token.model';
 
 @Injectable()
 export class UserRepository {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(RefreshToken.name)
+    private readonly refreshModel: Model<RefreshToken>
   ) {}
 
   async createUser(user: UserEntity) {
@@ -34,5 +37,9 @@ export class UserRepository {
 
   async healthCheck() {
     return this.userModel.findOne({}).exec();
+  }
+
+  async createRefreshToken(token: string, userId, expiryDate) {
+    await this.refreshModel.create({ token, userId, expiryDate });
   }
 }

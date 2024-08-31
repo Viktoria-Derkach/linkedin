@@ -8,6 +8,7 @@ import { AccountRegister } from '@linkedin/contracts';
 import { UserRole } from '@linkedin/interfaces';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserRepository } from '../user/repositories/user.repository';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -54,11 +55,22 @@ export class AuthService {
   }
 
   async login(id: string) {
+    const access_token = await this.jwtService.signAsync(
+      { id },
+      { expiresIn: '1h' }
+    );
+    const refreshToken = uuidv4();
+    await this.storeRefreshToken(refreshToken, id);
+
     return {
-      access_token: await this.jwtService.signAsync(
-        { id },
-        { expiresIn: '1h' }
-      ),
+      access_token,
+      refreshToken,
     };
+  }
+
+  async storeRefreshToken(token: string, userId) {
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 3);
+    await this.userRepository.createRefreshToken(token, userId, expiryDate);
   }
 }
