@@ -5,7 +5,11 @@ import {
   Logger,
   Post,
 } from '@nestjs/common';
-import { AccountLogin, AccountRegister } from '@linkedin/contracts';
+import {
+  AccountLogin,
+  AccountRefreshToken,
+  AccountRegister,
+} from '@linkedin/contracts';
 import { AuthService } from './auth.service';
 import {
   Ctx,
@@ -35,6 +39,15 @@ export class AuthController {
   @MessagePattern({ cmd: AccountLogin.topic })
   async login(@Payload() { email, password }: AccountLogin.Request) {
     const { id } = await this.authService.validateUser(email, password);
-    return this.authService.login(id);
+    const tokens = await this.authService.generateToken(id);
+    return {
+      ...tokens,
+      userId: id,
+    };
+  }
+
+  @MessagePattern({ cmd: AccountRefreshToken.topic })
+  async refreshTokens(@Payload() { token }: AccountRefreshToken.Request) {
+    return this.authService.refreshTokens(token);
   }
 }

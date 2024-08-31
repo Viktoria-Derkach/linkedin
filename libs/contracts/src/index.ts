@@ -4,3 +4,4 @@ export * from './lib/account/account.user-info';
 export * from './lib/account/account.user-courses';
 export * from './lib/account/account.change-profile';
 export * from './lib/account/account.buy-course';
+export * from './lib/account/account.refresh-token';

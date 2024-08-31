@@ -54,7 +54,7 @@ export class AuthService {
     return { id: user._id };
   }
 
-  async login(id: string) {
+  async generateToken(id) {
     const access_token = await this.jwtService.signAsync(
       { id },
       { expiresIn: '1h' }
@@ -72,5 +72,13 @@ export class AuthService {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 3);
     await this.userRepository.createRefreshToken(token, userId, expiryDate);
+  }
+
+  async refreshTokens(refreshToken: string) {
+    const token = await this.userRepository.findRefreshToken(refreshToken);
+    if (!token) {
+      throw new UnauthorizedException('Refresh token is Invalid');
+    }
+    return this.generateToken(token.userId);
   }
 }
