@@ -40,11 +40,15 @@ export class UserRepository {
   }
 
   async createRefreshToken(token: string, userId, expiryDate) {
-    await this.refreshModel.create({ token, userId, expiryDate });
+    await this.refreshModel.updateOne(
+      { userId },
+      { $set: { expiryDate, token } },
+      { upsert: true }
+    );
   }
 
   async findRefreshToken(refreshToken: string) {
-    return await this.refreshModel.findOneAndDelete({
+    return await this.refreshModel.findOne({
       token: refreshToken,
       expiryDate: { $gte: new Date() },
     });
