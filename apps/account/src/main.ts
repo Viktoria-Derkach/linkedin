@@ -10,36 +10,21 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
-  // Create the HTTP application
-  // const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
 
-  // Access the ConfigService to get environment variables
-  // const configService = app.get(ConfigService);
+  const url = configService.get<string>('RMQ_URL');
+  const queue = configService.get<string>('RMQ_QUEUE');
 
-  // Set a global prefix for all routes
-  // app.setGlobalPrefix('api');
-
-  // Start the HTTP application
-  // await app.listen(configService.get('HTTP_PORT', 3000));
-
-  // Create and configure the RabbitMQ microservice
   const microservice =
     await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
       transport: Transport.RMQ,
       options: {
-        urls: ['amqp://localhost:5672'],
-        queue: 'linkedin.account1',
-
-        // queueOptions: {
-        //   durable: true,
-        // },
+        urls: [url],
+        queue: queue,
       },
     });
 
-  // Start the microservice
-  // await app.startAllMicroservices();
-  // await microservice.listen();
-  // await app.init();
 
   Logger.log(`🚀 account is running on: `);
 
