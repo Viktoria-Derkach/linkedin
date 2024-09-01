@@ -5,13 +5,16 @@ import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
 import { IUser } from '@linkedin/interfaces';
 import { RefreshToken } from '../models/refresh-token.model';
+import { ResetToken } from '../models/reset-token.model';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     @InjectModel(RefreshToken.name)
-    private readonly refreshModel: Model<RefreshToken>
+    private readonly refreshModel: Model<RefreshToken>,
+    @InjectModel(ResetToken.name)
+    private readonly resetModel: Model<ResetToken>
   ) {}
 
   async createUser(user: UserEntity) {
@@ -39,10 +42,6 @@ export class UserRepository {
     return this.userModel.findOne({}).exec();
   }
 
-  async save(user) {
-    return user.save();
-  }
-
   async createRefreshToken(token: string, userId, expiryDate) {
     await this.refreshModel.updateOne(
       { userId },
@@ -55,6 +54,14 @@ export class UserRepository {
     return await this.refreshModel.findOne({
       token: refreshToken,
       expiryDate: { $gte: new Date() },
+    });
+  }
+
+  async refreshToken(resetToken: string, userId, expiryDate) {
+    return await this.resetModel.create({
+      token: resetToken,
+      userId: userId,
+      expiryDate,
     });
   }
 }

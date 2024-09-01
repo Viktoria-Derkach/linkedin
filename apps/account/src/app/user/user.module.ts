@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './models/user.model';
 import { UserRepository } from './repositories/user.repository';
 import { RefreshToken, RefreshTokenSchema } from './models/refresh-token.model';
+import { ResetToken, ResetTokenSchema } from './models/reset-token.model';
 // import { UserCommands } from './user.commands';
 // import { UserQueries } from './user.queries';
 // import { UserEventEmmiter } from './user.event-emmiter';
@@ -13,6 +14,10 @@ import { RefreshToken, RefreshTokenSchema } from './models/refresh-token.model';
     MongooseModule.forFeature([
       { name: User.name, schema: UserSchema },
       { name: RefreshToken.name, schema: RefreshTokenSchema },
+      {
+        name: ResetToken.name,
+        schema: ResetTokenSchema,
+      },
     ]),
   ],
   providers: [UserRepository],

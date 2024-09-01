@@ -6,3 +6,4 @@ export * from './lib/account/account.change-profile';
 export * from './lib/account/account.buy-course';
 export * from './lib/account/account.refresh-token';
 export * from './lib/account/account.change-password';
+export * from './lib/account/account.forgot-password';

@@ -14,6 +14,7 @@ import {
 import {
   AccountChangePassword,
   AccountChangeProfile,
+  AccountForgotPassword,
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
@@ -24,8 +25,9 @@ import { ChangeInfoDto } from '../dtos/change-info.dto';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 import { timeout } from 'rxjs';
 import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
-import { ChangePassword } from '../dtos/change-password.dto';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -74,13 +76,26 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Put('change-password')
-  async changePassword(@Body() dto: ChangePassword, @Req() req) {
+  async changePassword(@Body() dto: ChangePasswordDto, @Req() req) {
     try {
       return this.client
         .send(
           { cmd: AccountChangePassword.topic },
           { ...dto, userId: req.userId }
         )
+        .pipe(timeout(5000));
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    try {
+      return this.client
+        .send({ cmd: AccountForgotPassword.topic }, dto)
         .pipe(timeout(5000));
     } catch (e) {
       if (e instanceof Error) {

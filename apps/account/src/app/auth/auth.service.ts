@@ -10,12 +10,15 @@ import { UserRole } from '@linkedin/interfaces';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserRepository } from '../user/repositories/user.repository';
 import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly mailService: MailService
   ) {}
 
   async register({ email, password, displayName }: AccountRegister.Request) {
@@ -105,6 +108,24 @@ export class AuthService {
     user.save();
     return {
       message: 'Success',
+    };
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.findUser(email);
+    if (user) {
+      const expiryDate = new Date();
+      expiryDate.setHours(expiryDate.getHours() + 1);
+
+      const resetToken = nanoid(64);
+
+      await this.userRepository.refreshToken(resetToken, user._id, expiryDate);
+
+      this.mailService.sendPasswordResetEmail(email, resetToken);
+    }
+
+    return {
+      message: 'if this user exists, they will receive an email',
     };
   }
 }

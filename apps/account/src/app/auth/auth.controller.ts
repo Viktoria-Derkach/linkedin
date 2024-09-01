@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import {
   AccountChangePassword,
+  AccountForgotPassword,
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
@@ -58,5 +59,13 @@ export class AuthController {
     { userId, oldPassword, newPassword }: AccountChangePassword.Request
   ) {
     return this.authService.changePassword(userId, oldPassword, newPassword);
+  }
+
+  @MessagePattern({ cmd: AccountForgotPassword.topic })
+  async forgotPassword(
+    @Payload()
+    { email }: AccountForgotPassword.Request
+  ) {
+    return this.authService.forgotPassword(email);
   }
 }
