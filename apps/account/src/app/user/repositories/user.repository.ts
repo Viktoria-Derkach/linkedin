@@ -26,7 +26,7 @@ export class UserRepository {
     return this.userModel.findOne<IUser>({ email }).exec();
   }
 
-  async findUserById(id: string) {
+  async findUserById(id) {
     return this.userModel.findById(id).exec();
   }
 
@@ -62,6 +62,12 @@ export class UserRepository {
       token: resetToken,
       userId: userId,
       expiryDate,
+    });
+  }
+  async findResetToken(resetToken: string) {
+    return await this.resetModel.findOneAndDelete({
+      token: resetToken,
+      expiryDate: { $gte: new Date() },
     });
   }
 }

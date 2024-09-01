@@ -18,6 +18,7 @@ import {
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
+  AccountResetPassword,
 } from '@linkedin/contracts';
 import { LoginDto } from '../dtos/login.dto';
 import { RegisterDto } from '../dtos/register.dto';
@@ -28,6 +29,7 @@ import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -96,6 +98,19 @@ export class AuthController {
     try {
       return this.client
         .send({ cmd: AccountForgotPassword.topic }, dto)
+        .pipe(timeout(5000));
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @Post('reset-password')
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    try {
+      return this.client
+        .send({ cmd: AccountResetPassword.topic }, dto)
         .pipe(timeout(5000));
     } catch (e) {
       if (e instanceof Error) {

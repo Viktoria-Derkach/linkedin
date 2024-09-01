@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -87,8 +88,6 @@ export class AuthService {
   }
 
   async changePassword(userId, oldPassword: string, newPassword: string) {
-    console.log(userId, 'userId');
-
     const user = await this.userRepository.findUserById(userId);
     if (!user) {
       throw new NotFoundException('Wrong login or password');
@@ -105,7 +104,7 @@ export class AuthService {
 
     user.passwordHash = userWithNewPass.passwordHash;
 
-    user.save();
+    await user.save();
     return {
       message: 'Success',
     };
@@ -126,6 +125,30 @@ export class AuthService {
 
     return {
       message: 'if this user exists, they will receive an email',
+    };
+  }
+
+  async resetPassword(resetToken, newPassword) {
+    const token = await this.userRepository.findResetToken(resetToken);
+
+    if (!token) {
+      throw new UnauthorizedException('Invalid link');
+    }
+
+    //Change user password (MAKE SURE TO HASH!!)
+    const user = await this.userRepository.findUserById(token.userId);
+    if (!user) {
+      throw new InternalServerErrorException();
+    }
+    const userEntity = new UserEntity(user);
+    const userWithNewPass = await userEntity.setPassword(newPassword);
+
+    user.passwordHash = userWithNewPass.passwordHash;
+
+    await user.save();
+
+    return {
+      message: 'Password reset',
     };
   }
 }

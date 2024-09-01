@@ -11,6 +11,7 @@ import {
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
+  AccountResetPassword,
 } from '@linkedin/contracts';
 import { AuthService } from './auth.service';
 import {
@@ -67,5 +68,13 @@ export class AuthController {
     { email }: AccountForgotPassword.Request
   ) {
     return this.authService.forgotPassword(email);
+  }
+
+  @MessagePattern({ cmd: AccountResetPassword.topic })
+  async resetPassword(
+    @Payload()
+    { resetToken, newPassword }: AccountResetPassword.Request
+  ) {
+    return this.authService.resetPassword(resetToken, newPassword);
   }
 }
