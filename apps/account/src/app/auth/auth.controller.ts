@@ -6,6 +6,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  AccountChangePassword,
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
@@ -49,5 +50,13 @@ export class AuthController {
   @MessagePattern({ cmd: AccountRefreshToken.topic })
   async refreshTokens(@Payload() { token }: AccountRefreshToken.Request) {
     return this.authService.refreshTokens(token);
+  }
+
+  @MessagePattern({ cmd: AccountChangePassword.topic })
+  async changePassword(
+    @Payload()
+    { userId, oldPassword, newPassword }: AccountChangePassword.Request
+  ) {
+    return this.authService.changePassword(userId, oldPassword, newPassword);
   }
 }

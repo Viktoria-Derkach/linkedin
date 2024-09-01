@@ -18,7 +18,6 @@ export class UserController {
     Logger.log('Done');
   }
 
-  @UseGuards(AuthGuard)
   @Post('some-method')
   async someMethod(@Req() req) {
     return {

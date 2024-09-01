@@ -39,6 +39,10 @@ export class UserRepository {
     return this.userModel.findOne({}).exec();
   }
 
+  async save(user) {
+    return user.save();
+  }
+
   async createRefreshToken(token: string, userId, expiryDate) {
     await this.refreshModel.updateOne(
       { userId },

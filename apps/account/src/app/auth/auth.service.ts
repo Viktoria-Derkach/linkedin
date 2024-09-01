@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -80,5 +81,30 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token is Invalid');
     }
     return this.generateToken(token.userId);
+  }
+
+  async changePassword(userId, oldPassword: string, newPassword: string) {
+    console.log(userId, 'userId');
+
+    const user = await this.userRepository.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException('Wrong login or password');
+    }
+
+    const userEntity = new UserEntity(user);
+
+    const isCorrectPassword = await userEntity.validatePassword(oldPassword);
+    if (!isCorrectPassword) {
+      throw new UnauthorizedException('Wrong login or password');
+    }
+
+    const userWithNewPass = await userEntity.setPassword(newPassword);
+
+    user.passwordHash = userWithNewPass.passwordHash;
+
+    user.save();
+    return {
+      message: 'Success',
+    };
   }
 }

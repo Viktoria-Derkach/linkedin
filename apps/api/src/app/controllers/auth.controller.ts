@@ -6,10 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  AccountChangePassword,
   AccountChangeProfile,
   AccountLogin,
   AccountRefreshToken,
@@ -21,6 +24,8 @@ import { ChangeInfoDto } from '../dtos/change-info.dto';
 import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
 import { timeout } from 'rxjs';
 import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
+import { ChangePassword } from '../dtos/change-password.dto';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -59,6 +64,23 @@ export class AuthController {
     try {
       return this.client
         .send({ cmd: AccountRefreshToken.topic }, dto)
+        .pipe(timeout(5000));
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('change-password')
+  async changePassword(@Body() dto: ChangePassword, @Req() req) {
+    try {
+      return this.client
+        .send(
+          { cmd: AccountChangePassword.topic },
+          { ...dto, userId: req.userId }
+        )
         .pipe(timeout(5000));
     } catch (e) {
       if (e instanceof Error) {
