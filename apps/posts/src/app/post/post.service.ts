@@ -1,22 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { CreatePostDto } from '../dtos/create-post.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Post } from '../models/post.model';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class PostService {
-  createPost() {
-    // try {
-    //   const oldUser = await this.userRepository.findUser(email);
-    //   if (oldUser) {
-    //     throw new BadRequestException('This user has already been registered');
-    //   }
-    //   const newUser = await this.userRepository.createUser(newUserEntity);
-    //   return { email: newUser.email };
-    // } catch (error) {
-    //   if (error instanceof BadRequestException) {
-    //     return {
-    //       statusCode: error.getStatus(),
-    //       message: error.message,
-    //     };
-    //   }
-    // }
+  constructor(
+    @InjectModel(Post.name) private readonly postModel: Model<Post>
+  ) {}
+
+  createPost(post: CreatePostDto & { userId: string }) {
+    console.log('her');
+
+    const newPost = new this.postModel(post);
+    return newPost.save();
   }
 }

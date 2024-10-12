@@ -20,9 +20,12 @@ export class PostController {
   @Post('create-post')
   async createPost(@Body() dto: CreatePostDto, @Req() req) {
     try {
-      console.log(req.userId);
+        const newPost = await this.appService.createPost({
+          ...dto,
+          userId: req.userId,
+        });
 
-      // this.appService.createPost({ ...dto, userId: req.userId });
+        return { postId: newPost._id };
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);
