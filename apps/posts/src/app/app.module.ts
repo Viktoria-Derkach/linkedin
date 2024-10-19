@@ -11,6 +11,8 @@ import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { getMongoConfig } from './configs/mongo.config';
+import { UploadModule } from './upload/upload.module';
+import { UploadController } from './upload/upload.controller';
 
 @Module({
   imports: [
@@ -18,9 +20,10 @@ import { getMongoConfig } from './configs/mongo.config';
     ClientsModule.registerAsync([getRMQClientConfig()]),
     JwtModule.registerAsync(getJWTConfig()),
     PostModule,
+    UploadModule,
     MongooseModule.forRootAsync(getMongoConfig()),
   ],
-  controllers: [AppController, PostController],
+  controllers: [AppController, PostController, UploadController],
   providers: [AppService],
 })
 export class AppModule {}
