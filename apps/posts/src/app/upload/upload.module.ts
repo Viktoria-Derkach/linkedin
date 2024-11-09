@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
-import { UploadController } from './upload.controller';
-import { UploadService } from './upload.service';
-import { gridFsStorage } from '../configs/gridfs.config';
+import { FileUploadController } from './upload.controller';
+import { MulterConfigService } from './upload.service';
 
 @Module({
   imports: [
     MulterModule.registerAsync({
-      useFactory: gridFsStorage,
+      useClass: MulterConfigService,
     }),
   ],
-  controllers: [UploadController],
-  providers: [UploadService],
-  exports: [UploadService],
+  controllers: [FileUploadController],
 })
 export class UploadModule {}

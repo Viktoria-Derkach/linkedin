@@ -12,7 +12,6 @@ import { PostModule } from './post/post.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { getMongoConfig } from './configs/mongo.config';
 import { UploadModule } from './upload/upload.module';
-import { UploadController } from './upload/upload.controller';
 
 @Module({
   imports: [
@@ -23,7 +22,7 @@ import { UploadController } from './upload/upload.controller';
     UploadModule,
     MongooseModule.forRootAsync(getMongoConfig()),
   ],
-  controllers: [AppController, PostController, UploadController],
+  controllers: [AppController, PostController, PostController],
   providers: [AppService],
 })
 export class AppModule {}

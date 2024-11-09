@@ -1,26 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { GridFSBucket, ObjectId } from 'mongodb';
-import { getGridFSBucket } from '../configs/gridfs.config';
+import {
+  MulterModuleOptions,
+  MulterOptionsFactory,
+} from '@nestjs/platform-express';
+import { GridFsStorage } from 'multer-gridfs-storage';
+
 @Injectable()
-export class UploadService {
-  private bucket: GridFSBucket;
-
-  constructor() {
-    getGridFSBucket().then((bucket) => {
-      this.bucket = bucket;
+export class MulterConfigService implements MulterOptionsFactory {
+  createMulterOptions(): MulterModuleOptions {
+    const storage = new GridFsStorage({
+      url: 'mongodb://admin:admin@localhost:27019/linkedin?authSource=admin', // Your MongoDB connection string
+      file: (req, file) => {
+        return {
+          filename: `${Date.now()}-${file.originalname}`,
+        };
+      },
     });
-  }
 
-  async findFileById(id: string) {
-    const fileId = new ObjectId(id);
-    const cursor = this.bucket.find({ _id: fileId });
-    return await cursor.toArray();
-  }
-
-  async streamFileById(id: string, res: any) {
-    const fileId = new ObjectId(id);
-    const downloadStream = this.bucket.openDownloadStream(fileId);
-
-    downloadStream.pipe(res);
+    return {
+      storage,
+    };
   }
 }
