@@ -9,9 +9,11 @@ import {
   IsOptional,
   IsDate,
   IsObject,
+  ArrayMinSize,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Express } from 'express';
+import { IsUniqueArray } from '../decorators/is-unique-array.decorator';
 
 class EventDto {
   @IsString()
@@ -39,6 +41,8 @@ class PollDto {
   question: string;
 
   @IsArray()
+  @ArrayMinSize(2)
+  @IsUniqueArray({ message: 'Options must contain unique values' })
   @IsString({ each: true })
   options: string[];
 }

@@ -13,10 +13,10 @@ export class UserController {
   @Post('info')
   async info(@UserId() userId: string) {}
 
-  @Cron('* * * * */5 *')
-  async cron() {
-    Logger.log('Done');
-  }
+  // @Cron('* * */5 * * *')
+  // async cron() {
+  //   Logger.log('Done');
+  // }
 
   @Post('some-method')
   async someMethod(@Req() req) {

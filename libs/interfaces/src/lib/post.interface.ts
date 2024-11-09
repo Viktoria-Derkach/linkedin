@@ -12,6 +12,7 @@ export interface IMedia {
 export interface IPoll {
   question: string;
   options: string[];
+  votes: number[];
 }
 
 export enum PostType {

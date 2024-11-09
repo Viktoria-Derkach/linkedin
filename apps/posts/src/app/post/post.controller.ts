@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -11,25 +12,55 @@ import {
 import { PostService } from './post.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreatePostDto } from '../dtos/create-post.dto';
+import { VoteDto } from '../dtos/vote.dto';
 
-@Controller()
+@Controller('post')
 export class PostController {
-  constructor(private readonly appService: PostService) {}
+  constructor(private readonly postService: PostService) {}
 
   @UseGuards(AuthGuard)
-  @Post('create-post')
+  @Post('create')
   async createPost(@Body() dto: CreatePostDto, @Req() req) {
     try {
-        const newPost = await this.appService.createPost({
-          ...dto,
-          userId: req.userId,
-        });
+      const newPost = await this.postService.createPost({
+        ...dto,
+        userId: req.userId,
+      });
 
-        return { postId: newPost._id };
+      return { postId: newPost._id };
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);
       }
     }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('get-all')
+  async getAllPosts() {
+    try {
+      return await this.postService.getPosts();
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('/:id')
+  async getPost(@Param('id') id: string) {
+    try {
+      return await this.postService.getPost(id);
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @Post(':id/vote')
+  async vote(@Param('id') id: string, @Body() voteDto: VoteDto) {
+    return this.postService.vote(id, voteDto);
   }
 }

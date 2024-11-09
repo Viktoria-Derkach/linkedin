@@ -9,6 +9,9 @@ export class PostPoll extends Document implements IPoll {
 
   @Prop({ required: true })
   options: Types.Array<string>;
+
+  @Prop({ type: [Number], default: [] })
+  votes: Types.Array<number>;
 }
 
 export const PostPollSchema = SchemaFactory.createForClass(PostPoll);
