@@ -8,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app/app.module';
+import { HttpExceptionFilter } from './app/exception-filters/http-exception.filters';
 
 async function bootstrap() {
   // Create the HTTP application
@@ -18,7 +19,8 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     })
   );
-
+  const loggerInstance = app.get(Logger);
+  app.useGlobalFilters(new HttpExceptionFilter(loggerInstance));
   // Access the ConfigService to get environment variables
   const configService = app.get(ConfigService);
 
