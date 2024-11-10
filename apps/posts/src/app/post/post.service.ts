@@ -1,14 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post } from '../models/post.model';
 import { Model } from 'mongoose';
 import { VoteDto } from '../dtos/vote.dto';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class PostService {
   constructor(
-    @InjectModel(Post.name) private readonly postModel: Model<Post>
+    @InjectModel(Post.name) private readonly postModel: Model<Post>,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache
   ) {}
 
   createPost(post: CreatePostDto & { userId: string }) {
@@ -30,10 +32,22 @@ export class PostService {
     }
   }
 
-  getPosts() {
+  async getPosts() {
     console.log('her');
 
-    return this.postModel.find({});
+    // await this.cacheManager.set('key1', 'hello');
+    const cachedData = await this.cacheManager.get('posts');
+    if (cachedData) {
+      console.log('got data from cache');
+      return cachedData;
+    }
+    const postsData = await this.postModel.find({});
+    await this.cacheManager.set('posts', postsData, 60 * 10000);
+
+    return postsData;
+
+    // return this.postModel.find({});
+    // return this.cacheManager.get('key1');
   }
 
   async getPost(id: string): Promise<Post> {

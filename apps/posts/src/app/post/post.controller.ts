@@ -7,12 +7,15 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import { PostService } from './post.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
+import { CacheInterceptor } from '@nestjs/cache-manager';
+
 
 @Controller('post')
 export class PostController {

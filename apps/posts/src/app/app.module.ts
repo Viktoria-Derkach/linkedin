@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { getMongoConfig } from './configs/mongo.config';
 import { UploadModule } from './upload/upload.module';
 import { LoggingMiddleware } from './middleware/logging.middleware';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -22,6 +23,10 @@ import { LoggingMiddleware } from './middleware/logging.middleware';
     PostModule,
     UploadModule,
     MongooseModule.forRootAsync(getMongoConfig()),
+    CacheModule.register({
+      isGlobal: true,
+      ttl: 30 * 1000,
+    }),
   ],
   controllers: [AppController, PostController, PostController],
   providers: [AppService, Logger],
