@@ -14,9 +14,9 @@ import { PostService } from './post.service';
 import { AuthGuard } from '../guards/auth.guard';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
-import { CacheInterceptor } from '@nestjs/cache-manager';
+import { CacheInterceptor, CacheTTL } from '@nestjs/cache-manager';
 
-
+@UseInterceptors(CacheInterceptor)
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -38,10 +38,13 @@ export class PostController {
     }
   }
 
+  @CacheTTL(60 * 1000)
   @UseGuards(AuthGuard)
   @Get('get-all')
   async getAllPosts() {
     try {
+      console.log('INSIDE CONTROLLER');
+
       return await this.postService.getPosts();
     } catch (e) {
       if (e instanceof Error) {

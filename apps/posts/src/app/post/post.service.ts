@@ -33,16 +33,10 @@ export class PostService {
   }
 
   async getPosts() {
-    console.log('her');
+    console.log('INSIDE SERVICE');
 
-    // await this.cacheManager.set('key1', 'hello');
-    const cachedData = await this.cacheManager.get('posts');
-    if (cachedData) {
-      console.log('got data from cache');
-      return cachedData;
-    }
     const postsData = await this.postModel.find({});
-    await this.cacheManager.set('posts', postsData, 60 * 10000);
+
 
     return postsData;
 
