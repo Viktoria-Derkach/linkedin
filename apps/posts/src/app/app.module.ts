@@ -14,6 +14,8 @@ import { getMongoConfig } from './configs/mongo.config';
 import { UploadModule } from './upload/upload.module';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
+import { getRedisConfig } from './configs/redis.config';
 
 @Module({
   imports: [
@@ -23,10 +25,7 @@ import { CacheModule } from '@nestjs/cache-manager';
     PostModule,
     UploadModule,
     MongooseModule.forRootAsync(getMongoConfig()),
-    CacheModule.register({
-      isGlobal: true,
-      ttl: 30 * 1000,
-    }),
+    CacheModule.registerAsync(getRedisConfig()),
   ],
   controllers: [AppController, PostController, PostController],
   providers: [AppService, Logger],
