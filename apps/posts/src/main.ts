@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app/app.module';
 import { HttpExceptionFilter } from './app/exception-filters/http-exception.filters';
+import { ResponseInterceptor } from './app/interceptors/response.interceptor';
 
 async function bootstrap() {
   // Create the HTTP application
@@ -20,6 +21,8 @@ async function bootstrap() {
     })
   );
   const loggerInstance = app.get(Logger);
+
+  app.useGlobalInterceptors(new ResponseInterceptor());
   app.useGlobalFilters(new HttpExceptionFilter(loggerInstance));
   // Access the ConfigService to get environment variables
   const configService = app.get(ConfigService);
