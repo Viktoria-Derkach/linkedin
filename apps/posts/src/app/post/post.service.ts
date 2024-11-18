@@ -14,7 +14,7 @@ export class PostService {
   ) {}
 
   createPost(post: CreatePostDto & { userId: string }) {
-    console.log('her');
+    console.log(post, 'her');
 
     if (post.type === 'text') {
       const newPost = new this.postModel(post);

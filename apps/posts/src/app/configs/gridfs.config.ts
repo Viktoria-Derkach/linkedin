@@ -4,7 +4,7 @@ import { GridFsStorage } from 'multer-gridfs-storage';
 
 // MongoDB connection string with credentials
 const mongoURI =
-  'mongodb://admin:admin@localhost:27019/linkedin?authSource=admin';
+  'mongodb://localhost:27017/linkedin';
 
 // GridFS Storage configuration
 export const gridFsStorage = (): MulterModuleOptions => {
