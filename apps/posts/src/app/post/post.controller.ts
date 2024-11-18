@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -80,6 +81,11 @@ export class PostController {
         throw new UnauthorizedException(e.message);
       }
     }
+  }
+
+  @Delete(':id')
+  async deletePost(@Param('id') id: string) {
+    return this.postService.deletePost(id);
   }
 
   @Post(':id/vote')

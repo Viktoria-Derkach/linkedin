@@ -61,4 +61,8 @@ export class PostService {
     }
     throw new Error('The post is not a poll');
   }
+
+  async deletePost(id: string) {
+    this.postModel.findByIdAndDelete(id).exec();
+  }
 }
