@@ -15,9 +15,9 @@ export class PostService {
 
   createPost(post: CreatePostDto & { userId: string }) {
     const meta = {
-      created_at: new Date(),
-      interacted_at: new Date(),
-      updated_at: new Date(),
+      createdAt: new Date(),
+      interactedAt: new Date(),
+      updatedAt: new Date(),
     };
     if (post.type === 'text') {
       const newPost = new this.postModel({ ...post, meta });
@@ -36,19 +36,21 @@ export class PostService {
     }
   }
 
-  async getPosts(page: number, perPage: number, filters: any) {
-    console.log(page, perPage, filters, 'INSIDE SERVICE');
+  async getPosts(
+    page: number,
+    perPage: number,
+    sortBy: string,
+    sortDir: string,
+    filters?: any
+  ) {
+    console.log(page, perPage, sortDir, filters, 'INSIDE SERVICE');
 
     const posts = await this.postModel
       .find({})
       .skip((page - 1) * perPage)
       .limit(perPage)
-      .sort({ 'meta.interacted_at': -1 })
+      .sort({ [`meta.${sortBy}`]: sortDir === 'asc' ? -1 : 1 })
       .exec();
-
-    // const postsData = await this.postModel.find({});
-
-    // return {posts, };
 
     const total = await this.postModel.countDocuments(filters);
 
@@ -58,9 +60,9 @@ export class PostService {
         pagination: {
           total,
           count: posts.length,
-          per_page: perPage,
-          current_page: page,
-          total_pages: Math.ceil(total / perPage),
+          perPage: perPage,
+          currentPage: page,
+          totalPages: Math.ceil(total / perPage),
           links: [],
         },
       },

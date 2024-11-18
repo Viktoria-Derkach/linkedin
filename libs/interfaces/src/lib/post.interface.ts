@@ -10,9 +10,9 @@ export interface IMedia {
 }
 
 export interface IMeta {
-  created_at: Date;
-  interacted_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  interactedAt: Date;
+  updatedAt: Date;
 }
 
 export interface IPoll {

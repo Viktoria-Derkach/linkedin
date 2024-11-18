@@ -50,13 +50,13 @@ export const PostEventSchema = SchemaFactory.createForClass(PostEvent);
 @Schema()
 export class Meta extends Document implements IMeta {
   @Prop({ required: true, type: Date })
-  created_at: Date;
+  createdAt: Date;
 
   @Prop({ required: true, type: Date })
-  interacted_at: Date;
+  interactedAt: Date;
 
   @Prop({ required: true, type: Date })
-  updated_at: Date;
+  updatedAt: Date;
 }
 
 export const MetaSchema = SchemaFactory.createForClass(Meta);

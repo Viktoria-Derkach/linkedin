@@ -25,6 +25,7 @@ import {
 import { POST_NOT_FOUND_ERROR } from '../constants/errors.constants';
 import { CreatePostDto, CreatePostResponseDto } from '../dtos/create-post.dto';
 import { GetPostPesponseDto } from '../dtos/get-post.dto';
+import { FindPostsDto } from '../dtos/get-posts.dto';
 import { VoteDto } from '../dtos/vote.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
@@ -60,19 +61,17 @@ export class PostController {
   }
 
   @ApiOkResponse({ type: GetPostPesponseDto, isArray: true })
-  @CacheTTL(60 * 1000)
+  // FIXME cache with query
+  @CacheTTL(20 * 1000)
   @CacheKey('MYKEY')
   @UseGuards(AuthGuard)
   @Get('get-all')
-  async getAllPosts(
-    @Query('page') page: number,
-    @Query('perPage') perPage: number,
-    @Query('filters') filters: string
-  ) {
+  async getAllPosts(@Query() query: FindPostsDto) {
     try {
+      const { page, perPage, sortBy, sortDir } = query;
       console.log('INSIDE CONTROLLER');
 
-      return await this.postService.getPosts(page, perPage, filters);
+      return await this.postService.getPosts(page, perPage, sortBy, sortDir);
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);
