@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  Query,
   Req,
   UnauthorizedException,
   UseGuards,
@@ -63,11 +64,15 @@ export class PostController {
   @CacheKey('MYKEY')
   @UseGuards(AuthGuard)
   @Get('get-all')
-  async getAllPosts() {
+  async getAllPosts(
+    @Query('page') page: number,
+    @Query('perPage') perPage: number,
+    @Query('filters') filters: string
+  ) {
     try {
       console.log('INSIDE CONTROLLER');
 
-      return await this.postService.getPosts();
+      return await this.postService.getPosts(page, perPage, filters);
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);

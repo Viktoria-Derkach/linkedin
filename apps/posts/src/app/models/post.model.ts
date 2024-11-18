@@ -1,5 +1,12 @@
+import {
+  IEvent,
+  IMedia,
+  IMeta,
+  IPoll,
+  IPost,
+  PostType,
+} from '@linkedin/interfaces';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IPost, PostType, IEvent, IMedia, IPoll } from '@linkedin/interfaces';
 import { Document, Types } from 'mongoose';
 
 @Schema()
@@ -41,6 +48,20 @@ export class PostEvent extends Document implements IEvent {
 export const PostEventSchema = SchemaFactory.createForClass(PostEvent);
 
 @Schema()
+export class Meta extends Document implements IMeta {
+  @Prop({ required: true, type: Date })
+  created_at: Date;
+
+  @Prop({ required: true, type: Date })
+  interacted_at: Date;
+
+  @Prop({ required: true, type: Date })
+  updated_at: Date;
+}
+
+export const MetaSchema = SchemaFactory.createForClass(Meta);
+
+@Schema()
 export class Post extends Document<string> implements IPost {
   @Prop({ required: true, unique: false })
   userId: string;
@@ -67,6 +88,9 @@ export class Post extends Document<string> implements IPost {
 
   @Prop({ type: PostPollSchema, _id: false })
   poll?: IPoll;
+
+  @Prop({ type: Meta, _id: false })
+  meta: IMeta;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);

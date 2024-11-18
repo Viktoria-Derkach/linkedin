@@ -9,6 +9,12 @@ export interface IMedia {
   image: string; // Image URL or path
 }
 
+export interface IMeta {
+  created_at: Date;
+  interacted_at: Date;
+  updated_at: Date;
+}
+
 export interface IPoll {
   question: string;
   options: string[];
