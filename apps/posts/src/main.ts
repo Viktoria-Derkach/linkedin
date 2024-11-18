@@ -36,7 +36,7 @@ async function bootstrap() {
 
   await app.init();
 
-  Logger.log(`🚀 Application is running on: http://localhost:${port}`);
+  Logger.log(`🚀 Posts is running on: http://localhost:${port}`);
   // const app = await NestFactory.create(AppModule);
   // const globalPrefix = 'api';
   // app.setGlobalPrefix(globalPrefix);
