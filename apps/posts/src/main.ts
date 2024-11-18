@@ -4,9 +4,10 @@
  */
 
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
 
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 import { HttpExceptionFilter } from './app/exception-filters/http-exception.filters';
 import { ResponseInterceptor } from './app/interceptors/response.interceptor';
@@ -14,6 +15,7 @@ import { ResponseInterceptor } from './app/interceptors/response.interceptor';
 async function bootstrap() {
   // Create the HTTP application
   const app = await NestFactory.create(AppModule);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -32,6 +34,17 @@ async function bootstrap() {
 
   // Start the HTTP application
   const port = configService.get('HTTP_PORT', 3001);
+
+  const config = new DocumentBuilder()
+    .setTitle('E-commerce API')
+    .setDescription('API documentation for our simple e-commerce app')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(port);
 
   await app.init();

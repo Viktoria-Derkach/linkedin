@@ -1,10 +1,10 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePostDto } from '../dtos/create-post.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Post } from '../models/post.model';
-import { Model } from 'mongoose';
-import { VoteDto } from '../dtos/vote.dto';
 import { Cache } from 'cache-manager';
+import { Model } from 'mongoose';
+import { CreatePostDto } from '../dtos/create-post.dto';
+import { VoteDto } from '../dtos/vote.dto';
+import { Post } from '../models/post.model';
 
 @Injectable()
 export class PostService {
@@ -14,8 +14,6 @@ export class PostService {
   ) {}
 
   createPost(post: CreatePostDto & { userId: string }) {
-    console.log(post, 'her');
-
     if (post.type === 'text') {
       const newPost = new this.postModel(post);
       return newPost.save();
@@ -36,7 +34,6 @@ export class PostService {
     console.log('INSIDE SERVICE');
 
     const postsData = await this.postModel.find({});
-
 
     return postsData;
 
