@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  NotFoundException,
   Param,
   Post,
   Req,
@@ -19,10 +21,12 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
+import { POST_NOT_FOUND_ERROR } from '../constants/errors.constants';
 import { CreatePostDto, CreatePostResponseDto } from '../dtos/create-post.dto';
 import { GetPostPesponseDto } from '../dtos/get-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
 import { AuthGuard } from '../guards/auth.guard';
+import { IdValidationPipe } from '../pipes/ad-validation.pipe';
 import { PostService } from './post.service';
 
 @ApiBearerAuth()
@@ -83,11 +87,29 @@ export class PostController {
     }
   }
 
-  @Delete(':id')
-  async deletePost(@Param('id') id: string) {
-    return this.postService.deletePost(id);
+  @UseGuards(AuthGuard)
+  @Get(':id')
+  async getById(@Param('id', IdValidationPipe) id: string) {
+    const post = await this.postService.findById(id);
+    if (!post) {
+      throw new NotFoundException(POST_NOT_FOUND_ERROR);
+    }
+
+    return post;
   }
 
+  @HttpCode(204)
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  async deletePost(@Param('id') id: string) {
+    const post = await this.postService.deletePost(id);
+
+    if (!post) {
+      throw new NotFoundException(POST_NOT_FOUND_ERROR);
+    }
+  }
+
+  @UseGuards(AuthGuard)
   @Post(':id/vote')
   async vote(@Param('id') id: string, @Body() voteDto: VoteDto) {
     return this.postService.vote(id, voteDto);
