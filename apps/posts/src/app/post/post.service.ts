@@ -34,6 +34,17 @@ export class PostService {
       });
       return newPost.save();
     }
+
+    if (post.type === 'event') {
+      // const { event, ...rest } = post;
+      // const { question, options } = event;
+      // const votes = Array(options.length).fill(0);
+      const newPost = new this.postModel({
+        ...post,
+        meta,
+      });
+      return newPost.save();
+    }
   }
 
   async getPosts(

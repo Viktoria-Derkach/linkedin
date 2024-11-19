@@ -29,6 +29,7 @@ import { FindPostsDto } from '../dtos/get-posts.dto';
 import { VoteDto } from '../dtos/vote.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
+import { FormatBodyPipe } from '../pipes/format-body.pipe';
 import { PostService } from './post.service';
 
 @ApiBearerAuth()
@@ -45,7 +46,7 @@ export class PostController {
   @ApiBadRequestResponse({ description: 'Bad payload sent' })
   @UseGuards(AuthGuard)
   @Post('create')
-  async createPost(@Body() dto: CreatePostDto, @Req() req) {
+  async createPost(@Body(new FormatBodyPipe()) dto: CreatePostDto, @Req() req) {
     try {
       const newPost = await this.postService.createPost({
         ...dto,
