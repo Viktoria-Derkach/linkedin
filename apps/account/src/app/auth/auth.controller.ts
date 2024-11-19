@@ -1,27 +1,20 @@
 import {
-  BadRequestException,
-  Body,
-  Controller,
-  Logger,
-  Post,
-} from '@nestjs/common';
-import {
   AccountChangePassword,
   AccountForgotPassword,
+  AccountGetUser,
   AccountLogin,
   AccountRefreshToken,
   AccountRegister,
   AccountResetPassword,
 } from '@linkedin/contracts';
-import { AuthService } from './auth.service';
+import { Controller } from '@nestjs/common';
 import {
   Ctx,
-  EventPattern,
   MessagePattern,
   Payload,
   RmqContext,
-  RmqRecord,
 } from '@nestjs/microservices';
+import { AuthService } from './auth.service';
 
 @Controller()
 export class AuthController {
@@ -76,5 +69,15 @@ export class AuthController {
     { resetToken, newPassword }: AccountResetPassword.Request
   ) {
     return this.authService.resetPassword(resetToken, newPassword);
+  }
+
+  @MessagePattern({ cmd: AccountGetUser.topic })
+  async getUser(
+    @Payload()
+    { userId }: AccountGetUser.Request
+  ): Promise<AccountGetUser.Response> {
+    console.log(userId, 'userId from account');
+
+    return this.authService.getUser(userId);
   }
 }

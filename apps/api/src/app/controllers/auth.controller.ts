@@ -1,7 +1,15 @@
 import {
-  BadRequestException,
+  AccountChangePassword,
+  AccountForgotPassword,
+  AccountLogin,
+  AccountRefreshToken,
+  AccountRegister,
+  AccountResetPassword,
+} from '@linkedin/contracts';
+import {
   Body,
   Controller,
+  Get,
   Inject,
   Param,
   Patch,
@@ -11,30 +19,25 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import {
-  AccountChangePassword,
-  AccountChangeProfile,
-  AccountForgotPassword,
-  AccountLogin,
-  AccountRefreshToken,
-  AccountRegister,
-  AccountResetPassword,
-} from '@linkedin/contracts';
-import { LoginDto } from '../dtos/login.dto';
-import { RegisterDto } from '../dtos/register.dto';
-import { ChangeInfoDto } from '../dtos/change-info.dto';
-import { ClientProxy, RmqRecordBuilder } from '@nestjs/microservices';
+import { ClientProxy } from '@nestjs/microservices';
 import { timeout } from 'rxjs';
-import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
+import { ChangeInfoDto } from '../dtos/change-info.dto';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
-import { AuthGuard } from '../guards/auth.guard';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { LoginDto } from '../dtos/login.dto';
+import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
+import { RegisterDto } from '../dtos/register.dto';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { AuthGuard } from '../guards/auth.guard';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
 export class AuthController {
   // constructor(private readonly rmqService: RMQService) {}
-  constructor(@Inject('linkedin') private readonly client: ClientProxy) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject('linkedin') private readonly client: ClientProxy
+  ) {}
 
   @Post('register')
   async register(@Body() dto: RegisterDto) {
@@ -112,6 +115,20 @@ export class AuthController {
       return this.client
         .send({ cmd: AccountResetPassword.topic }, dto)
         .pipe(timeout(5000));
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('get-user')
+  async getUser(@Req() req) {
+    try {
+      console.log(req.userId);
+
+      return await this.authService.getUserPermissions(req.userId);
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);

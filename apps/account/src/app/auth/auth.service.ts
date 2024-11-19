@@ -1,3 +1,5 @@
+import { AccountRegister } from '@linkedin/contracts';
+import { UserRole } from '@linkedin/interfaces';
 import {
   BadRequestException,
   Injectable,
@@ -6,13 +8,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { AccountRegister } from '@linkedin/contracts';
-import { UserRole } from '@linkedin/interfaces';
+import { nanoid } from 'nanoid';
+import { v4 as uuidv4 } from 'uuid';
+import { MailService } from '../mail/mail.service';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserRepository } from '../user/repositories/user.repository';
-import { v4 as uuidv4 } from 'uuid';
-import { nanoid } from 'nanoid';
-import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -150,5 +150,13 @@ export class AuthService {
     return {
       message: 'Password reset',
     };
+  }
+
+  async getUser(userId: string) {
+    const user = await this.userRepository.findUserById(userId);
+
+    if (!user) throw new BadRequestException();
+
+    return user;
   }
 }

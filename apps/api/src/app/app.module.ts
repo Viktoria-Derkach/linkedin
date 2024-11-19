@@ -1,13 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { getJWTConfig } from './configs/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
+import { ClientsModule } from '@nestjs/microservices';
+import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ScheduleModule } from '@nestjs/schedule';
-import { AuthController } from './controllers/auth.controller';
-import { UserController } from './controllers/user.controller';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { getJWTConfig } from './configs/jwt.config';
+import { getMongoConfig } from './configs/mongo.config';
 import { getRMQClientConfig } from './configs/rmq.client.config';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './controllers/auth.service';
+import { UserController } from './controllers/user.controller';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -15,8 +19,11 @@ import { getRMQClientConfig } from './configs/rmq.client.config';
     ClientsModule.registerAsync([getRMQClientConfig()]),
     JwtModule.registerAsync(getJWTConfig()),
     PassportModule,
+    RolesModule,
+    MongooseModule.forRootAsync(getMongoConfig()),
     ScheduleModule.forRoot(),
   ],
   controllers: [AuthController, UserController],
+  providers: [AuthService],
 })
 export class AppModule {}

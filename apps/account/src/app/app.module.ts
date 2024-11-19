@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { getMongoConfig } from './configs/mongo.config';
+import { MailModule } from './mail/mail.module';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
-import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [

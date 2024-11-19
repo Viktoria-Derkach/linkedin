@@ -1,11 +1,11 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import {
   IUser,
   IUserCourses,
   PurchaseState,
   UserRole,
 } from '@linkedin/interfaces';
-import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 @Schema()
 export class UserCourses extends Document implements IUserCourses {
@@ -36,6 +36,9 @@ export class User extends Document<string> implements IUser {
     default: UserRole.Student,
   })
   role: UserRole;
+
+  @Prop({ required: false, type: SchemaTypes.ObjectId })
+  roleId: Types.ObjectId;
 
   @Prop({ type: [UserCoursesSchema], _id: false })
   courses: Types.Array<UserCourses>;
