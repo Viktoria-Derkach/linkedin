@@ -126,8 +126,6 @@ export class AuthController {
   @Get('get-user')
   async getUser(@Req() req) {
     try {
-      console.log(req.userId);
-
       return await this.authService.getUserPermissions(req.userId);
     } catch (e) {
       if (e instanceof Error) {
