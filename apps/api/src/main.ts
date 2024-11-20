@@ -6,9 +6,8 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 
-import { AppModule } from './app/app.module';
-import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app/app.module';
 
 async function bootstrap() {
   // Create the HTTP application
@@ -32,7 +31,7 @@ async function bootstrap() {
 
   await app.init();
 
-  Logger.log(`🚀 Application is running on: http://localhost:${port}`);
+  Logger.log(`🚀 Api is running on: http://localhost:${port}`);
 }
 
 bootstrap();

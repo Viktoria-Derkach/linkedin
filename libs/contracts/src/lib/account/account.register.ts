@@ -13,6 +13,10 @@ export namespace AccountRegister {
     @IsOptional()
     @IsString()
     displayName?: string;
+
+    @IsOptional()
+    @IsString()
+    roleId?: string;
   }
 
   export class Response {

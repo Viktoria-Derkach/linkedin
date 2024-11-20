@@ -15,6 +15,7 @@ export class UserEntity implements IUser {
   role: UserRole;
   courses?: IUserCourses[];
   events: IDomainEvent[] = [];
+  roleId?: string;
 
   constructor(user: IUser) {
     this._id = user._id;
@@ -23,6 +24,7 @@ export class UserEntity implements IUser {
     this.email = user.email;
     this.role = user.role;
     this.courses = user.courses;
+    this.roleId = user.roleId;
   }
 
   public getCourseState(courseId: string): PurchaseState {

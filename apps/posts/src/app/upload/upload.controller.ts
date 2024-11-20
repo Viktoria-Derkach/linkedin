@@ -13,8 +13,6 @@ export class FileUploadController {
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   uploadFile(@UploadedFile() file: Express.Multer.File) {
-    console.log(file, 'hhh');
-
     return {
       message: 'File uploaded successfully!',
       // fileId: file.path,

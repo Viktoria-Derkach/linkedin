@@ -39,14 +39,10 @@ export class AuthorizationGuard implements CanActivate {
         request.userId
       );
 
-      console.log(userPermissions, 'userPermissions');
-
       for (const routePermission of routePermissions) {
         const userPermission = userPermissions.find(
           (perm) => perm.resource === routePermission.resource
         );
-
-        console.log(userPermission, 'userPermission');
 
         if (!userPermission) throw new ForbiddenException();
 

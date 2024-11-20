@@ -22,7 +22,12 @@ export class AuthService {
     private readonly mailService: MailService
   ) {}
 
-  async register({ email, password, displayName }: AccountRegister.Request) {
+  async register({
+    email,
+    password,
+    displayName,
+    roleId,
+  }: AccountRegister.Request) {
     try {
       const oldUser = await this.userRepository.findUser(email);
       if (oldUser) {
@@ -33,6 +38,7 @@ export class AuthService {
         email,
         passwordHash: '',
         role: UserRole.Student,
+        roleId,
       }).setPassword(password);
       const newUser = await this.userRepository.createUser(newUserEntity);
       return { email: newUser.email };

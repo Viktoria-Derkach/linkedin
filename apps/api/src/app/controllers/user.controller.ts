@@ -1,5 +1,4 @@
 import { Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-// import { Resource } from '../enums/resource.enum';
 import { Permissions } from '../decorators/permissions.decorator';
 import { Action } from '../enums/action.enum';
 import { Resource } from '../enums/resource.enum';
@@ -32,15 +31,5 @@ export class UserController {
       message: 'hi',
       userId: req.userId,
     };
-    // try {
-    //   return await this.rmqService.send<
-    //     AccountChangeProfile.Request,
-    //     AccountChangeProfile.Response
-    //   >(AccountChangeProfile.topic, { user: { ...dto }, id });
-    // } catch (e) {
-    //   if (e instanceof Error) {
-    //     throw new UnauthorizedException(e.message);
-    //   }
-    // }
   }
 }
