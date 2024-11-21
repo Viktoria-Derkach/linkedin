@@ -18,7 +18,7 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(to: string, token: string) {
-    console.log('in sendPasswordResetEmail');
+
 
     const resetLink = `http://yourapp.com/reset-password?token=${token}`;
     const mailOptions = {

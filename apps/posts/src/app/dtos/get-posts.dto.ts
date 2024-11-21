@@ -1,11 +1,7 @@
+import { PostType } from '@linkedin/interfaces';
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsPositive } from 'class-validator';
+import { IsEnum, IsIn, IsInt, IsOptional, IsPositive } from 'class-validator';
 
-// @Query('page') page: number,
-// @Query('perPage') perPage: number,
-// @Query('sortBy') sortBy: string,
-// @Query('sortDir') sortDir: string,
-// @Query('filters') filters: string
 export class FindPostsDto {
   @IsOptional()
   @IsInt()
@@ -26,4 +22,8 @@ export class FindPostsDto {
   @IsOptional()
   @IsIn(['interactedAt', 'createdAt', 'updatedAt']) // Only allows 'asc' or 'desc'
   sortBy: 'interactedAt' | 'createdAt' | 'updatedAt' = 'interactedAt'; // Default value of 'asc'
+
+  @IsOptional()
+  @IsEnum(PostType)
+  type: PostType;
 }

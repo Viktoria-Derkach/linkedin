@@ -16,17 +16,10 @@ export class AuthService {
     const source$ = this.client
       .send({ cmd: AccountGetUser.topic }, { userId })
       .pipe(timeout(5000));
-    //   const user = await this.UserModel.findById(userId);
-
-    //   if (!user) throw new BadRequestException();
 
     const user = await lastValueFrom(source$);
 
-    console.log(user, 'user');
-
     const role = await this.rolesService.getRoleById(user.roleId?.toString());
     return role.permissions;
-
-    // return [];
   }
 }

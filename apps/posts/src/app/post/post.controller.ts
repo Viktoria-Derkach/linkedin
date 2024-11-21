@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpCode,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -11,10 +12,10 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 
-import { CacheInterceptor, CacheKey, CacheTTL } from '@nestjs/cache-manager';
+import { CacheTTL } from '@nestjs/cache-manager';
+
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -22,6 +23,7 @@ import {
   ApiOkResponse,
   ApiOperation,
 } from '@nestjs/swagger';
+import { Cache } from 'cache-manager';
 import { POST_NOT_FOUND_ERROR } from '../constants/errors.constants';
 import { CreatePostDto, CreatePostResponseDto } from '../dtos/create-post.dto';
 import { GetPostPesponseDto } from '../dtos/get-post.dto';
@@ -33,10 +35,12 @@ import { FormatBodyPipe } from '../pipes/format-body.pipe';
 import { PostService } from './post.service';
 
 @ApiBearerAuth()
-@UseInterceptors(CacheInterceptor)
 @Controller('post')
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(
+    private readonly postService: PostService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache
+  ) {}
 
   @ApiOperation({ summary: 'Used to create a new post' })
   @ApiCreatedResponse({
@@ -62,17 +66,31 @@ export class PostController {
   }
 
   @ApiOkResponse({ type: GetPostPesponseDto, isArray: true })
-  // FIXME cache with query
-  @CacheTTL(20 * 1000)
-  @CacheKey('MYKEY')
+  @CacheTTL(60 * 1000)
   @UseGuards(AuthGuard)
   @Get('get-all')
   async getAllPosts(@Query() query: FindPostsDto) {
     try {
-      const { page, perPage, sortBy, sortDir } = query;
-      console.log('INSIDE CONTROLLER');
+      const cacheKey = `getPosts:${JSON.stringify(query)}`;
+      const cachedData = await this.cacheManager.get(cacheKey);
+      console.log(cacheKey, 'INSIDE CONTROLLER');
 
-      return await this.postService.getPosts(page, perPage, sortBy, sortDir);
+      if (cachedData) {
+        return cachedData;
+      }
+      const { page, perPage, sortBy, sortDir, type } = query;
+
+      const posts = await this.postService.getPosts(
+        page,
+        perPage,
+        sortBy,
+        sortDir,
+        type
+      );
+
+      await this.cacheManager.set(cacheKey, posts);
+
+      return posts;
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);

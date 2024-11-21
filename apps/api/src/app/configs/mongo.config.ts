@@ -5,7 +5,6 @@ export const getMongoConfig = (): MongooseModuleAsyncOptions => {
   return {
     useFactory: (configService: ConfigService) => {
       const uri = getMongoString(configService);
-      console.log(uri, 'urillllll');
 
       return {
         uri,
@@ -14,12 +13,12 @@ export const getMongoConfig = (): MongooseModuleAsyncOptions => {
     inject: [ConfigService],
     imports: [ConfigModule],
   };
-}
+};
 
 const getMongoString = (configService: ConfigService) =>
-	'mongodb://' +
-	configService.get('MONGO_HOST') +
-	':' +
-	configService.get('MONGO_PORT') +
-	'/' +
-	configService.get('MONGO_DATABASE')
+  'mongodb://' +
+  configService.get('MONGO_HOST') +
+  ':' +
+  configService.get('MONGO_PORT') +
+  '/' +
+  configService.get('MONGO_DATABASE');

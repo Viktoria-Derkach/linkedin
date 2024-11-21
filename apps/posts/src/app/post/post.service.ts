@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Cache } from 'cache-manager';
 import { Model } from 'mongoose';
 import { CreatePostDto } from '../dtos/create-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
@@ -9,8 +8,7 @@ import { Post } from '../models/post.model';
 @Injectable()
 export class PostService {
   constructor(
-    @InjectModel(Post.name) private readonly postModel: Model<Post>,
-    @Inject('CACHE_MANAGER') private cacheManager: Cache
+    @InjectModel(Post.name) private readonly postModel: Model<Post>
   ) {}
 
   createPost(post: CreatePostDto & { userId: string }) {
@@ -36,9 +34,6 @@ export class PostService {
     }
 
     if (post.type === 'event') {
-      // const { event, ...rest } = post;
-      // const { question, options } = event;
-      // const votes = Array(options.length).fill(0);
       const newPost = new this.postModel({
         ...post,
         meta,
@@ -52,12 +47,17 @@ export class PostService {
     perPage: number,
     sortBy: string,
     sortDir: string,
+    type: string,
     filters?: any
   ) {
     console.log(page, perPage, sortDir, filters, 'INSIDE SERVICE');
 
+    const filtersCollections = {
+      ...(type ? { type } : {}),
+    };
+
     const posts = await this.postModel
-      .find({})
+      .find({ ...filtersCollections })
       .skip((page - 1) * perPage)
       .limit(perPage)
       .sort({ [`meta.${sortBy}`]: sortDir === 'asc' ? -1 : 1 })

@@ -76,8 +76,6 @@ export class AuthController {
     @Payload()
     { userId }: AccountGetUser.Request
   ): Promise<AccountGetUser.Response> {
-    console.log(userId, 'userId from account');
-
     return this.authService.getUser(userId);
   }
 }
