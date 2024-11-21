@@ -78,14 +78,15 @@ export class PostController {
       if (cachedData) {
         return cachedData;
       }
-      const { page, perPage, sortBy, sortDir, type } = query;
+      const { page, perPage, sortBy, sortDir, type, userId } = query;
 
       const posts = await this.postService.getPosts(
         page,
         perPage,
         sortBy,
         sortDir,
-        type
+        type,
+        userId
       );
 
       await this.cacheManager.set(cacheKey, posts);

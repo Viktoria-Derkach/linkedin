@@ -48,12 +48,14 @@ export class PostService {
     sortBy: string,
     sortDir: string,
     type: string,
+    userId: string,
     filters?: any
   ) {
     console.log(page, perPage, sortDir, filters, 'INSIDE SERVICE');
 
     const filtersCollections = {
       ...(type ? { type } : {}),
+      ...(userId ? { userId } : {}),
     };
 
     const posts = await this.postModel

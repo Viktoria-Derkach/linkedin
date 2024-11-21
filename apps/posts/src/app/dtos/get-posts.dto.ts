@@ -26,4 +26,8 @@ export class FindPostsDto {
   @IsOptional()
   @IsEnum(PostType)
   type: PostType;
+
+  @IsOptional()
+  @Type(() => String)
+  userId: string;
 }
