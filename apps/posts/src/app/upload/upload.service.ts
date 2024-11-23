@@ -9,7 +9,7 @@ import { GridFsStorage } from 'multer-gridfs-storage';
 export class MulterConfigService implements MulterOptionsFactory {
   createMulterOptions(): MulterModuleOptions {
     const storage = new GridFsStorage({
-      url: 'mongodb://localhost:27017/linkedin', // Your MongoDB connection string
+      url: 'mongodb://admin:admin@localhost:27019/linkedin?authSource=admin', // Your MongoDB connection string
       file: (req, file) => {
         return {
           filename: `${Date.now()}-${file.originalname}`,

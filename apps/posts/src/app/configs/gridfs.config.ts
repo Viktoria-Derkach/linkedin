@@ -1,10 +1,10 @@
-import { GridFSBucket, MongoClient } from 'mongodb';
 import { MulterModuleOptions } from '@nestjs/platform-express';
+import { GridFSBucket, MongoClient } from 'mongodb';
 import { GridFsStorage } from 'multer-gridfs-storage';
 
 // MongoDB connection string with credentials
 const mongoURI =
-  'mongodb://localhost:27017/linkedin';
+  'mongodb://admin:admin@localhost:27019/linkedin?authSource=admin';
 
 // GridFS Storage configuration
 export const gridFsStorage = (): MulterModuleOptions => {
