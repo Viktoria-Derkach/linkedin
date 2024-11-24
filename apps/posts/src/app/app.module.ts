@@ -11,6 +11,10 @@ import { getJWTConfig } from './configs/jwt.config';
 import { getMongoConfig } from './configs/mongo.config';
 import { getRedisConfig } from './configs/redis.config';
 import { getRMQClientConfig } from './configs/rmq.client.config';
+import {
+  CsrfMiddleware,
+  doubleCsrfProtection,
+} from './middleware/csrf.middleware';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { PostController } from './post/post.controller';
 import { PostModule } from './post/post.module';
@@ -32,5 +36,9 @@ import { UploadModule } from './upload/upload.module';
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*');
+
+    consumer
+      .apply(CsrfMiddleware, doubleCsrfProtection) // Apply CSRF middleware
+      .forRoutes('*'); // Apply to all routes
   }
 }

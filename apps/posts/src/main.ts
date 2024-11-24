@@ -12,9 +12,12 @@ import { AppModule } from './app/app.module';
 import { HttpExceptionFilter } from './app/exception-filters/http-exception.filters';
 import { ResponseInterceptor } from './app/interceptors/response.interceptor';
 
+import cookieParser from 'cookie-parser';
+
 async function bootstrap() {
-  // Create the HTTP application
   const app = await NestFactory.create(AppModule);
+
+  app.use(cookieParser());
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -50,14 +53,6 @@ async function bootstrap() {
   await app.init();
 
   Logger.log(`🚀 Posts is running on: http://localhost:${port}`);
-  // const app = await NestFactory.create(AppModule);
-  // const globalPrefix = 'api';
-  // app.setGlobalPrefix(globalPrefix);
-  // const port = process.env.PORT || 3000;
-  // await app.listen(port);
-  // Logger.log(
-  //   `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
-  // );
 }
 
 bootstrap();

@@ -83,8 +83,6 @@ export class PostService {
     }
 
     if (post.type === 'event') {
-      console.log(newPost, 'newPost');
-
       const updatedPost = await this.postModel.findByIdAndUpdate(
         id,
         {
