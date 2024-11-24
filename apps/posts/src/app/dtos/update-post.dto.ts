@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsOptional,
@@ -9,11 +9,7 @@ import {
 } from 'class-validator';
 import { EventDto, MediaDto, PollDto } from './common.dto';
 
-export class CreatePostDto {
-  @ApiProperty()
-  @IsString()
-  type: 'file' | 'event' | 'media' | 'poll' | 'text';
-
+export class UpdatePostDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
@@ -45,7 +41,7 @@ export class CreatePostDto {
   poll?: PollDto;
 }
 
-export class CreatePostResponseDto {
-  @ApiProperty()
-  postId: string;
-}
+// export class UpdatePostResponseDto {
+//   @ApiProperty()
+//   postId: string;
+// }

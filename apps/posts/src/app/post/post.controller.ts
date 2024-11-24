@@ -7,6 +7,7 @@ import {
   Inject,
   NotFoundException,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -28,6 +29,7 @@ import { POST_NOT_FOUND_ERROR } from '../constants/errors.constants';
 import { CreatePostDto, CreatePostResponseDto } from '../dtos/create-post.dto';
 import { GetPostPesponseDto } from '../dtos/get-post.dto';
 import { FindPostsDto } from '../dtos/get-posts.dto';
+import { UpdatePostDto } from '../dtos/update-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
 import { AuthGuard } from '../guards/auth.guard';
 import { IdValidationPipe } from '../pipes/ad-validation.pipe';
@@ -58,6 +60,29 @@ export class PostController {
       });
 
       return { postId: newPost._id };
+    } catch (e) {
+      if (e instanceof Error) {
+        throw new UnauthorizedException(e.message);
+      }
+    }
+  }
+
+  @ApiOperation({ summary: 'Used to update a post' })
+  @ApiCreatedResponse({
+    description: 'Post updated',
+    type: CreatePostResponseDto,
+  })
+  @ApiBadRequestResponse({ description: 'Bad payload sent' })
+  @UseGuards(AuthGuard)
+  @Patch('update/:id')
+  async updatePost(
+    @Param('id') id: string,
+    @Body(new FormatBodyPipe()) dto: UpdatePostDto
+  ) {
+    try {
+      const newPost = await this.postService.updatePost(dto, id);
+
+      return newPost;
     } catch (e) {
       if (e instanceof Error) {
         throw new UnauthorizedException(e.message);

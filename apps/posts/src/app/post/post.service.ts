@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreatePostDto } from '../dtos/create-post.dto';
+import { UpdatePostDto } from '../dtos/update-post.dto';
 import { VoteDto } from '../dtos/vote.dto';
 import { Post } from '../models/post.model';
 
@@ -39,6 +40,60 @@ export class PostService {
         meta,
       });
       return newPost.save();
+    }
+  }
+
+  async updatePost(newPost: UpdatePostDto, id: string) {
+    const post = await this.postModel.findById(id);
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    const meta = {
+      createdAt: post.meta.createdAt,
+      interactedAt: post.meta.interactedAt,
+      updatedAt: new Date(),
+    };
+    if (post.type === 'text') {
+      const updatedPost = await this.postModel.findByIdAndUpdate(
+        id,
+        {
+          ...newPost,
+          meta,
+        },
+        { new: true }
+      );
+
+      return updatedPost;
+    }
+    if (post.type === 'poll') {
+      const { poll } = newPost;
+      const { question, options } = poll;
+
+      const votes = Array(options.length).fill(0);
+      const updatedPost = await this.postModel.findByIdAndUpdate(
+        id,
+        {
+          poll: { question, options, votes },
+          meta,
+        },
+        { new: true }
+      );
+      return updatedPost;
+    }
+
+    if (post.type === 'event') {
+      console.log(newPost, 'newPost');
+
+      const updatedPost = await this.postModel.findByIdAndUpdate(
+        id,
+        {
+          ...newPost,
+          meta,
+        },
+        { new: true }
+      );
+      return updatedPost;
     }
   }
 
